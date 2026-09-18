@@ -2,11 +2,14 @@
 
 English | [中文](./README.zh.md)
 
-[![CI](https://github.com/Zuixi/zcode-upload-forensics/actions/workflows/ci.yml/badge.svg)](https://github.com/Zuixi/zcode-upload-forensics/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](#requirements)
-[![No dependencies](https://img.shields.io/badge/dependencies-none-brightgreen.svg)](#requirements)
-[![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](#requirements)
+[![CI](https://github.com/Zuixi/zcode-upload-forensics/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Zuixi/zcode-upload-forensics/actions/workflows/ci.yml)
+[![License: MIT](./assets/badges/license.svg)](./LICENSE)
+[![Python: 3.9+](./assets/badges/python.svg)](#requirements)
+[![Dependencies: none](./assets/badges/dependencies.svg)](#requirements)
+[![Platforms: macOS, Linux, Windows](./assets/badges/platforms.svg)](#requirements)
+
+<!-- Status badges are committed as local SVGs in assets/badges/ on purpose: no third-party
+     image host is involved, so they render on GitHub, in local Markdown previews and offline. -->
 
 An **agent skill** that produces a court-style answer to one question:
 
@@ -127,6 +130,7 @@ scripts/zcode_forensics/     the tool, one concern per module
 scripts/selftest.py          regression suite (synthetic fixtures only)
 references/                  field semantics and platform lock recipes
 docs/findings.md             what was measured, on which builds, and how
+assets/badges/               self-hosted status badges (no third-party image host)
 ```
 
 Everything is Python 3.9+ standard library. Keep the `scripts/` tree together when copying the skill.

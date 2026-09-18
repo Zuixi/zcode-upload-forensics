@@ -2,11 +2,11 @@
 
 [English](./README.md) | 中文
 
-[![CI](https://github.com/Zuixi/zcode-upload-forensics/actions/workflows/ci.yml/badge.svg)](https://github.com/Zuixi/zcode-upload-forensics/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](#运行环境)
-[![No dependencies](https://img.shields.io/badge/dependencies-none-brightgreen.svg)](#运行环境)
-[![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](#运行环境)
+[![CI](https://github.com/Zuixi/zcode-upload-forensics/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Zuixi/zcode-upload-forensics/actions/workflows/ci.yml)
+[![License: MIT](./assets/badges/license.svg)](./LICENSE)
+[![Python: 3.9+](./assets/badges/python.svg)](#运行环境)
+[![Dependencies: none](./assets/badges/dependencies.svg)](#运行环境)
+[![Platforms: macOS, Linux, Windows](./assets/badges/platforms.svg)](#运行环境)
 
 一个 **agent skill**，用取证的方式回答一个问题：
 
@@ -45,6 +45,7 @@ scripts/zcode_forensics/     一个模块一个职责
 scripts/selftest.py          回归套件（仅合成夹具）
 references/                  字段语义与各平台加锁方法
 docs/findings.md             实测记录：测到了什么、在哪个版本、怎么测的
+assets/badges/               自托管状态徽章（不依赖任何第三方图床）
 ```
 
 全量 Python 3.9+ 标准库。拷贝技能时请保持 `scripts/` 目录完整。
