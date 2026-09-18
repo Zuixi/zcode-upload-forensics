@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Reports produced by the tool (may contain local paths)
+zcode-upload-report*.html
+zcode-upload-report*.json
+
+# Editors
+.vscode/
+.idea/

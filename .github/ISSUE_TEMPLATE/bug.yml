@@ -1,0 +1,70 @@
+name: Bug report
+description: Something in the diagnosis is wrong, or the tool failed on your machine
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. **Do not paste an unredacted report** — it contains repository paths, branch names and internal host names.
+        Generate the attachment with `--redact`:
+        ```bash
+        python3 scripts/diagnose.py --redact --out report.html --json report.json
+        ```
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options: [Windows, macOS, Linux, WSL, Other]
+    validations:
+      required: true
+
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      description: Output of `python3 -V`
+    validations:
+      required: true
+
+  - type: input
+    id: client
+    attributes:
+      label: ZCode client version
+      description: Shown in the report header, or from the client's About dialog
+    validations:
+      required: true
+
+  - type: dropdown
+    id: verdict
+    attributes:
+      label: Verdict you got
+      options: [UPLOADED, PACKED_PENDING, CAPTURED_NOT_ACCEPTED, INCONCLUSIVE, NO_LOCAL_TRACE, FEATURE_ABSENT, the tool crashed]
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+      description: If you believe the verdict is wrong, explain what you see on disk that contradicts it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: paths
+    attributes:
+      label: Path detection ledger
+      description: Output of `python3 scripts/diagnose.py --list-paths` (review it before pasting — it contains your home directory).
+      render: json
+    validations:
+      required: false
+
+  - type: textarea
+    id: selftest
+    attributes:
+      label: Self-test output
+      description: Output of `python3 scripts/selftest.py`
+      render: text
+    validations:
+      required: false

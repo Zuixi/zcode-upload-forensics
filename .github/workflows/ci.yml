@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    name: selftest (${{ matrix.os }} / py${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.9", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Syntax check
+        run: python -m py_compile scripts/diagnose.py scripts/selftest.py
+
+      - name: Regression suite (synthetic fixtures only, never touches ~/.zcode)
+        run: python scripts/selftest.py
+
+      - name: End-to-end smoke test on the runner's own layout
+        run: python scripts/diagnose.py --out report.html --json report.json
+        continue-on-error: true
+
+      - name: Report must be well-formed and carry a verdict
+        run: python -c "import json,pathlib; d=json.loads(pathlib.Path('report.json').read_text(encoding='utf-8')); assert d['verdict']['code']; assert pathlib.Path('report.html').read_text(encoding='utf-8').count('<h2>') >= 9; print('ok', d['verdict']['code'])"
+
+  real-lock:
+    # The lock path touches real OS permission primitives, so it is exercised
+    # against a throwaway fixture on every platform we claim to support.
+    name: real lock (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Lock / verify / unlock a throwaway fixture
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            sudo -E env "PATH=$PATH" python scripts/selftest.py --with-lock
+          else
+            python scripts/selftest.py --with-lock
+          fi

@@ -1,0 +1,25 @@
+{
+  "name": "zcode-upload-forensics",
+  "owner": {
+    "name": "zcode-upload-forensics contributors",
+    "url": "https://github.com/Zuixi"
+  },
+  "metadata": {
+    "description": "Forensic skill: determine whether the ZCode desktop client silently uploaded your workspaces and full Git history, and produce an auditable HTML evidence report.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "zcode-upload-forensics",
+      "description": "Determine whether ZCode packed and uploaded this machine's workspaces (including full Git history), with a confidence-rated verdict, falsifiers and a single-file HTML report.",
+      "source": "./",
+      "strict": true,
+      "category": "security",
+      "tags": ["security", "privacy", "forensics", "zcode", "git-history", "data-exfiltration"],
+      "license": "MIT",
+      "homepage": "https://github.com/Zuixi/zcode-upload-forensics",
+      "repository": "https://github.com/Zuixi/zcode-upload-forensics",
+      "skills": ["./"]
+    }
+  ]
+}
