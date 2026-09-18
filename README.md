@@ -38,7 +38,7 @@ JSON    : /home/user/zcode-upload-report.json
 
 ## Why this exists
 
-In September 2026 a public write-up described ZCode (Zhipu / Z.ai's AI coding desktop client) silently packaging the entire workspace — `.git/objects`, reflogs, worktrees, `.git/config` — encrypting it with a server-issued RSA public key and posting it straight to an Aliyun OSS bucket, with the private key held only in the cloud.
+In September 2026 a public write-up described ZCode silently packaging the entire workspace — `.git/objects`, reflogs, worktrees, `.git/config` — encrypting it with a server-issued RSA public key and posting it straight to an Aliyun OSS bucket, with the private key held only in the cloud. [`docs/findings.md`](./docs/findings.md) records what we reproduced ourselves, on which client builds, and what remains unverified.
 
 Two properties make that hard to reason about:
 
@@ -116,6 +116,21 @@ If you have an agent, you usually do not need the commands at all:
 
 > Ask: *"Check whether ZCode uploaded my code and give me a diagnostic report."*
 
+## Repository layout
+
+```
+SKILL.md                     what an agent reads
+scripts/diagnose.py          CLI entry point
+scripts/zcode_forensics/     the tool, one concern per module
+  constants.py  messages.py  util.py  detection.py  signatures.py
+  collect.py    verdict.py   report.py  locking.py   diffing.py  cli.py
+scripts/selftest.py          regression suite (synthetic fixtures only)
+references/                  field semantics and platform lock recipes
+docs/findings.md             what was measured, on which builds, and how
+```
+
+Everything is Python 3.9+ standard library. Keep the `scripts/` tree together when copying the skill.
+
 ## What is in the report
 
 1. Conclusion and reasoning, with confidence and **falsifiers** (what would overturn it)
@@ -176,7 +191,7 @@ Other projects in this space take a detect-and-disable-script approach; this one
 
 ## Contributing
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md). The two most valuable contributions are **new signature needles** (when a new client build moves the code) and **new payload carriers** (where the pipeline hides on a given platform). Every change must keep `scripts/selftest.py` green on all three operating systems — CI runs the matrix.
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) — it includes a module map saying where each kind of change belongs. The two most valuable contributions are **new signature needles** (when a new client build moves the code) and **new payload carriers** (where the pipeline hides on a given platform). Every change must keep `scripts/selftest.py` green on all three operating systems — CI runs the matrix.
 
 ## Disclaimer
 

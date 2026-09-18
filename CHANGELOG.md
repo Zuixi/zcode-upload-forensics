@@ -5,8 +5,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Changed
+
+- **Decoupled the collector into a package.** `scripts/diagnose.py` is now a thin entry point; the logic lives in `scripts/zcode_forensics/` (constants, messages, util, detection, signatures, collect, verdict, report, locking, diffing, cli). Module imports are explicit and acyclic — nothing wildcard-imports.
+
 ### Added
 
+- [`docs/findings.md`](./docs/findings.md): what was measured, on which client builds, how, and what remains unverified — including the two-machine comparison and the host-bundle-only case.
 - `verdict.flags`: locale-independent machine-readable signals (`accepted_records`, `evidence_wiped`, `signature_drift`, …) so tests and automation never match rendered prose.
 - Bilingual English/Chinese documentation (`README.md`, `README.zh.md`).
 - English as the primary report language, with `--lang {auto,en,zh}` and locale auto-detection.

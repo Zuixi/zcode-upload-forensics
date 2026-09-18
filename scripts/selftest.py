@@ -26,6 +26,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 DIAGNOSE = HERE / "diagnose.py"
+LOCAL_PACKAGE = "zcode_forensics"  # the tool's own package, not a dependency
 
 # Standard-library modules that only exist on some platforms; Python 3.9 has no
 # sys.stdlib_module_names, so the origin-based fallback needs this allowlist.
@@ -497,7 +498,8 @@ def main():
     # 17) the tool must stay dependency-free
     stdlib_root = Path(sysconfig.get_paths()["stdlib"]).resolve()
     offenders = []
-    for path in (DIAGNOSE, HERE / "selftest.py"):
+    sources = [DIAGNOSE, HERE / "selftest.py"] + sorted((HERE / LOCAL_PACKAGE).glob("*.py"))
+    for path in sources:
         tree = ast.parse(path.read_text(encoding="utf-8"))
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
@@ -507,7 +509,7 @@ def main():
             else:
                 continue
             for mod in mods:
-                if mod in sys.builtin_module_names or mod in PLATFORM_STDLIB_MODULES:
+                if mod == LOCAL_PACKAGE or mod in sys.builtin_module_names or mod in PLATFORM_STDLIB_MODULES:
                     continue
                 if hasattr(sys, "stdlib_module_names"):
                     ok = mod in sys.stdlib_module_names

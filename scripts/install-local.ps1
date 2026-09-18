@@ -23,6 +23,7 @@ foreach ($dest in $targets) {
     Copy-Item -Recurse -Force $src $target
     Remove-Item -Recurse -Force (Join-Path $target '.git') -ErrorAction SilentlyContinue
     Remove-Item -Recurse -Force (Join-Path $target 'scripts\__pycache__') -ErrorAction SilentlyContinue
+    Remove-Item -Recurse -Force (Join-Path $target 'scripts\zcode_forensics\__pycache__') -ErrorAction SilentlyContinue
     Write-Host "installed: $target"
 }
 

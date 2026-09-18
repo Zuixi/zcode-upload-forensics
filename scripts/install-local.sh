@@ -18,7 +18,7 @@ for dest in "$HOME/.pi/agent/skills" "$HOME/.claude/skills" "$HOME/.agents/skill
   mkdir -p "$dest"
   rm -rf "$target"
   cp -R "$SRC" "$target"
-  rm -rf "$target/.git" "$target/scripts/__pycache__"
+  rm -rf "$target/.git" "$target/scripts/__pycache__" "$target/scripts/zcode_forensics/__pycache__"
   echo "installed: $target"
 done
 

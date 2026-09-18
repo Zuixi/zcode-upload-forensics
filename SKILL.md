@@ -89,6 +89,27 @@ Section "path detection ledger" in the report lists every detected path, **how i
 
 **Runtime**: Python **3.9+** (the system `python3` on macOS is enough; zero third-party dependencies). A version guard runs at entry.
 
+## Repository layout
+
+```
+scripts/diagnose.py            CLI entry point (thin; logic lives in the package)
+scripts/zcode_forensics/       one concern per module
+  constants.py                 signature needles, schemas, static tables
+  messages.py                  localisation catalogue + detect_lang/tr
+  util.py                      formatting, IO, error collection
+  detection.py                 path, install and payload discovery
+  signatures.py                bundle signature scan + invariant check
+  collect.py                   evidence collection from the data directory
+  verdict.py                   truth table decision + machine-readable flags
+  report.py                    HTML rendering
+  locking.py                   verify / quarantine+lock / restore
+  diffing.py                   comparison against a previous report
+  cli.py                       argument parsing and wiring
+scripts/selftest.py            regression suite (synthetic fixtures only)
+```
+
+Keep the whole `scripts/` tree together when copying this skill: `diagnose.py` imports its sibling package and will fail with a clear error if the package is missing.
+
 ## Reference files
 
 - `references/evidence-map.md` — `state.json` field semantics, client code carriers and the `accepted == uploaded` invariant, the v2 manifest schema, interpretation rules, and evidence volatility. Read it when explaining a field or doing a manual cross-check.

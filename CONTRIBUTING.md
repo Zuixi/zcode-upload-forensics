@@ -9,6 +9,26 @@ Thanks for helping. The most valuable contributions are the ones that keep the t
 3. **Read-only by default.** Anything that mutates system state must sit behind an explicit flag, be reversible, and verify itself with a probe.
 4. **Keep `scripts/selftest.py` green on all three operating systems.** CI runs the matrix (Python 3.9 / 3.12 / 3.13 × Linux / macOS / Windows).
 
+## Where things live
+
+The collector is a small package; put a change in the module that owns the concern instead of growing the entry point.
+
+| Module | Owns | Typical change |
+|---|---|---|
+| `zcode_forensics/constants.py` | signature needles, schemas, static tables | new needle, new sensitive-path pattern |
+| `zcode_forensics/messages.py` | every user-facing string, locale detection | new locale, wording change |
+| `zcode_forensics/util.py` | formatting, JSON/text IO, `Ctx` error collector | new helper used by 2+ modules |
+| `zcode_forensics/detection.py` | home/data-root/install/userData discovery, payload carriers | new carrier or platform layout |
+| `zcode_forensics/signatures.py` | bundle scanning + the `accepted == uploaded` adjacency check | new semantic check |
+| `zcode_forensics/collect.py` | reading `state.json`, manifests, aux traces, processes | new field or artifact to read |
+| `zcode_forensics/verdict.py` | truth table, confidence, `flags` | new verdict branch |
+| `zcode_forensics/report.py` | HTML sections, CSS, escaping | new report section |
+| `zcode_forensics/locking.py` | verify / quarantine+lock / restore | new platform lock primitive |
+| `zcode_forensics/diffing.py` | previous-report comparison | new tracked signal |
+| `zcode_forensics/cli.py` | argparse and wiring only | new flag |
+
+Imports between modules are explicit (no wildcard imports, no import cycles); `report.py` may import from `locking.py` for the remediation section, never the other way round.
+
 ## The two contributions we want most
 
 ### New signature needles

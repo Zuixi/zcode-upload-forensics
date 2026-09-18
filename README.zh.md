@@ -32,7 +32,22 @@ JSON    : /Users/you/zcode-upload-report.json
 | `NO_LOCAL_TRACE` | 该版本有这条链路，但本机没有捕获产物 |
 | `FEATURE_ABSENT` | 该版本不含这条链路的代码签名 |
 
-同时给出影响面：文件数、`.git/objects` 体积与占比、分支与 worktree、敏感路径命中、随包上传的全局配置。
+同时给出影响面：文件数、`.git/objects` 体积与占比、分支与 worktree、敏感路径命中、随包上传的全局配置。已复现的实测记录见 [`docs/findings.md`](./docs/findings.md)。
+
+## 仓库结构
+
+```
+SKILL.md                     agent 读取的技能正文
+scripts/diagnose.py          CLI 入口（薄）
+scripts/zcode_forensics/     一个模块一个职责
+  constants.py  messages.py  util.py  detection.py  signatures.py
+  collect.py    verdict.py   report.py  locking.py   diffing.py  cli.py
+scripts/selftest.py          回归套件（仅合成夹具）
+references/                  字段语义与各平台加锁方法
+docs/findings.md             实测记录：测到了什么、在哪个版本、怎么测的
+```
+
+全量 Python 3.9+ 标准库。拷贝技能时请保持 `scripts/` 目录完整。
 
 ## 安装
 
