@@ -108,7 +108,7 @@ python3 scripts/selftest.py
 
 ## 报告包含什么
 
-渲染样张见 [`docs/sample-report.html`](./docs/sample-report.html)——由完全合成的夹具配合 `--redact paths` 生成，不含任何真实路径、哈希或分支名。需要重新生成时执行 `python3 scripts/make-sample-report.py`。
+渲染样张已发布到 **[zuixi.github.io/zcode-upload-forensics/sample-report.html](https://zuixi.github.io/zcode-upload-forensics/sample-report.html)**——由完全合成的夹具配合 `--redact paths` 生成，不含任何真实路径、哈希或分支名。源码见 [`docs/sample-report.html`](./docs/sample-report.html)，需要重新生成时执行 `python3 scripts/make-sample-report.py`。
 
 1. 结论与依据（含置信度与 **falsifiers**：什么条件能推翻它）
 2. 命中的真值表行

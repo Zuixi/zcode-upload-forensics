@@ -5,6 +5,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Added
+
+- GitHub Pages publishes the `docs/` directory, so the example report renders instead of showing its source: <https://zuixi.github.io/zcode-upload-forensics/sample-report.html>.
+
 ## [0.1.0] - 2026-09-19
 
 First release.

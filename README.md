@@ -139,7 +139,7 @@ Everything is Python 3.9+ standard library. Keep the `scripts/` tree together wh
 
 ## What is in the report
 
-A rendered example lives in [`docs/sample-report.html`](./docs/sample-report.html) — generated from a fully synthetic fixture with `--redact paths`, so it contains no real paths, hashes or branch names. Regenerate it with `python3 scripts/make-sample-report.py`.
+A rendered example is published at **[zuixi.github.io/zcode-upload-forensics/sample-report.html](https://zuixi.github.io/zcode-upload-forensics/sample-report.html)** — generated from a fully synthetic fixture with `--redact paths`, so it contains no real paths, hashes or branch names. Source: [`docs/sample-report.html`](./docs/sample-report.html); regenerate with `python3 scripts/make-sample-report.py`.
 
 1. Conclusion and reasoning, with confidence and **falsifiers** (what would overturn it)
 2. The truth-table row that was matched
