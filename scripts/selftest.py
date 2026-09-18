@@ -12,16 +12,39 @@ verdict. Nothing here touches the real ~/.zcode.
 from __future__ import annotations
 
 import argparse
+import ast
+import importlib.util
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
+import sysconfig
 import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 DIAGNOSE = HERE / "diagnose.py"
+
+# Standard-library modules that only exist on some platforms; Python 3.9 has no
+# sys.stdlib_module_names, so the origin-based fallback needs this allowlist.
+PLATFORM_STDLIB_MODULES = {
+    "winreg",
+    "winsound",
+    "msvcrt",
+    "_winapi",
+    "nt",
+    "posix",
+    "pwd",
+    "grp",
+    "termios",
+    "fcntl",
+    "resource",
+    "syslog",
+    "tty",
+    "pty",
+}
 
 # Must stay in sync with diagnose.py:NEEDLES / MECHANISM_NEEDLES / GATE_NEEDLE
 GATE = b"snapshot"
@@ -217,7 +240,7 @@ def build_posix_case(root: Path, name, plat):
 
 
 def run_diag(json_path: Path, html_path: Path, extra_args=(), env_extra=None, install_dir=None):
-    args = list(extra_args)
+    args = ["--lang", "en", *extra_args]
     if install_dir is not None:
         args += ["--install-dir", str(install_dir)]
     cmd = [sys.executable, str(DIAGNOSE), "--out", str(html_path), "--json", str(json_path), *args]
@@ -234,6 +257,8 @@ def run_case(base: Path, extra_args=(), env_extra=None):
     js = base / "report.json"
     cmd = [
         str(DIAGNOSE),
+        "--lang",
+        "en",
         "--zcode-dir",
         str(base / "zcode"),
         "--install-dir",
@@ -265,6 +290,11 @@ import os  # noqa: E402  (used by run_diag env handling)
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--keep", action="store_true")
+    ap.add_argument(
+        "--with-lock",
+        action="store_true",
+        help="also exercise the real OS lock primitives against a throwaway fixture",
+    )
     args = ap.parse_args()
 
     root = Path(tempfile.mkdtemp(prefix="zcfx-selftest-"))
@@ -308,7 +338,7 @@ def main():
     r, doc, _ = run_case(b)
     print("case 04 wiped")
     check("verdict=INCONCLUSIVE", doc and doc["verdict"]["code"] == "INCONCLUSIVE", str(doc and doc["verdict"]["code"]))
-    check("warns about quit-time purge", any("退出时" in x for x in (doc or {}).get("verdict", {}).get("reasons", [])))
+    check("flags.evidence_wiped", doc and doc["verdict"]["flags"]["evidence_wiped"] is True)
 
     # 5) mechanism present, nothing captured -> NO_LOCAL_TRACE
     b = build_case(root, "05-no-trace", checkpoints=None)
@@ -329,7 +359,7 @@ def main():
     print("case 07 drift")
     check("verdict=UPLOADED", doc and doc["verdict"]["code"] == "UPLOADED", str(doc and doc["verdict"]["code"]))
     check("confidence downgraded", doc and doc["verdict"]["confidence"] == "medium")
-    check("drift warning raised", any("版本漂移" in w for w in (doc or {}).get("warnings", [])))
+    check("flags.signature_drift", doc and doc["verdict"]["flags"]["signature_drift"] is True)
 
     # 8) --no-scan must not crash and must warn
     b = build_case(root, "08-noscan")
@@ -413,12 +443,24 @@ def main():
     # 14) lock ops must refuse a platform override
     base, home, _bundle = build_posix_case(root, "14-lock-guard", "linux")
     r = subprocess.run(
-        [sys.executable, str(DIAGNOSE), "--platform", "linux", "--home", str(home), "--apply-lock", "--yes", "--force"],
+        [
+            sys.executable,
+            str(DIAGNOSE),
+            "--lang",
+            "en",
+            "--platform",
+            "linux",
+            "--home",
+            str(home),
+            "--apply-lock",
+            "--yes",
+            "--force",
+        ],
         capture_output=True, text=True, encoding="utf-8", errors="replace",
     )
     print("case 14 lock guard on platform override")
     check("rc=2 refused", r.returncode == 2, f"rc={r.returncode}")
-    check("explains why", "不一致" in r.stderr, r.stderr[:200])
+    check("explains why", "does not match" in r.stderr, r.stderr[:200])
 
     # 15) no desktop client at all: only the remote-host bundle pushed into the
     #     data dir (real case found on a macOS box used as an SSH workspace host)
@@ -436,6 +478,70 @@ def main():
     check("verdict=UPLOADED", doc and doc["verdict"]["code"] == "UPLOADED", str(doc and doc["verdict"]["code"]))
     check("mechanism confirmed from bundle", doc and doc["signatures"]["mechanism_hits"] == doc["signatures"]["mechanism_total"], str(doc and doc["signatures"].get("mechanism_hits")))
     check("target is the .cjs bundle", doc and str(doc["client"].get("asar")).endswith("zcode-server.cjs"), str(doc and doc["client"].get("asar")))
+
+    # 16) report language: explicit en/zh, and the English report must be free of CJK
+    base = build_case(root, "16-lang")
+    _, doc_en, path_en = run_case(base, extra_args=["--lang", "en"])
+    en_text = path_en.read_text(encoding="utf-8")  # read before the zh run overwrites it
+    _, doc_zh, path_zh = run_case(base, extra_args=["--lang", "zh"])
+    zh_text = path_zh.read_text(encoding="utf-8")
+    cjk = re.compile(r"[\u4e00-\u9fff]")
+    print("case 16 report language")
+    check("en: doc lang", doc_en and doc_en.get("lang") == "en", str(doc_en and doc_en.get("lang")))
+    check("en: english section titles", "Conclusion and reasoning" in en_text)
+    check("en: no CJK anywhere in report", not cjk.search(en_text), (cjk.search(en_text) or [None])[0] if cjk.search(en_text) else "")
+    check("en: verdict label localised", doc_en and doc_en["verdict"]["label"] == "Uploaded", str(doc_en and doc_en["verdict"]["label"]))
+    check("zh: doc lang", doc_zh and doc_zh.get("lang") == "zh", str(doc_zh and doc_zh.get("lang")))
+    check("zh: chinese section titles", "结论与依据" in zh_text)
+
+    # 17) the tool must stay dependency-free
+    stdlib_root = Path(sysconfig.get_paths()["stdlib"]).resolve()
+    offenders = []
+    for path in (DIAGNOSE, HERE / "selftest.py"):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                mods = [a.name.split(".")[0] for a in node.names]
+            elif isinstance(node, ast.ImportFrom) and not node.level and node.module:
+                mods = [node.module.split(".")[0]]
+            else:
+                continue
+            for mod in mods:
+                if mod in sys.builtin_module_names or mod in PLATFORM_STDLIB_MODULES:
+                    continue
+                if hasattr(sys, "stdlib_module_names"):
+                    ok = mod in sys.stdlib_module_names
+                else:
+                    spec = importlib.util.find_spec(mod)
+                    origin = getattr(spec, "origin", None)
+                    ok = bool(origin) and Path(origin).resolve().is_relative_to(stdlib_root)
+                if not ok:
+                    offenders.append(f"{path.name}:{mod}")
+    print("case 17 standard library only")
+    check("no third-party imports", not offenders, ", ".join(offenders))
+
+    if args.with_lock:
+        base = build_case(root, "18-lock")
+        zdir = str(base / "zcode")
+
+        def lock_cmd(*flags):
+            return subprocess.run(
+                [sys.executable, str(DIAGNOSE), "--lang", "en", "--zcode-dir", zdir, *flags],
+                capture_output=True, text=True, encoding="utf-8", errors="replace",
+            )
+
+        print("case 18 real lock / verify / unlock")
+        before = lock_cmd("--verify-lock")
+        check("writable before locking", before.returncode == 1, before.stdout[-200:])
+        applied = lock_cmd("--apply-lock", "--yes", "--force")
+        check("apply-lock exits 0", applied.returncode == 0, applied.stdout[-300:] + applied.stderr[-300:])
+        locked = lock_cmd("--verify-lock")
+        check("write probe denied while locked", locked.returncode == 0, locked.stdout[-200:])
+        check("evidence quarantined, not deleted", bool(list((base / "zcode" / "v2").glob("checkpoints-quarantine-*"))))
+        restored = lock_cmd("--unlock", "--yes")
+        check("unlock exits 0", restored.returncode == 0, restored.stdout[-300:])
+        after = lock_cmd("--verify-lock")
+        check("writable after unlock", after.returncode == 1, after.stdout[-200:])
 
     print()
     if failures:

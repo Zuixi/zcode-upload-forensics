@@ -7,6 +7,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Added
 
+- `verdict.flags`: locale-independent machine-readable signals (`accepted_records`, `evidence_wiped`, `signature_drift`, …) so tests and automation never match rendered prose.
 - Bilingual English/Chinese documentation (`README.md`, `README.zh.md`).
 - English as the primary report language, with `--lang {auto,en,zh}` and locale auto-detection.
 - CI matrix: Linux/macOS/Windows × Python 3.9/3.12/3.13, plus a real lock/unlock job per platform.
@@ -25,7 +26,7 @@ Initial release.
 - **Impact analysis**, including the heuristic that a ciphertext far smaller than the manifest implies an earlier full baseline upload.
 - **Optional, reversible lock**: quarantine the evidence directory, deny writes (`icacls` / `chflags` / `chattr`), verify with a write probe, and restore with `--unlock`.
 - **Redaction mode** (`--redact`) that hashes branch names, worktree names and remote hosts.
-- **16 synthetic fixture cases** covering every verdict branch, signature drift, `--no-scan`, `--redact`, `--diff`, simulated macOS/Linux layouts, environment-variable overrides, the detection ledger, the lock guard and a host-bundle-only machine.
+- **18 synthetic fixture cases** covering every verdict branch, signature drift, `--no-scan`, `--redact`, `--diff`, both report languages (asserting the English report contains no CJK), a standard-library-only check, simulated macOS/Linux layouts, environment-variable overrides, the detection ledger, the lock guard, a host-bundle-only machine, and an opt-in `--with-lock` mode that exercises the real OS lock primitives.
 
 ### Verified against
 

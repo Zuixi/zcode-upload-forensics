@@ -27,7 +27,7 @@ Translate "a pile of local state files plus a minified client bundle" into a **r
    python3 scripts/diagnose.py --out ./zcode-upload-report.html
    ```
 
-   Useful flags: `--list-paths` (print the path-detection ledger **before** doing anything else), `--lang {auto,en,zh}` (report language, `auto` follows the system locale), `--redact` (mask paths, branch names, remote hosts), `--no-scan` (skip the ~300 MB bundle scan: instant, but the code semantics stay unverified), `--diff prev.json` (what changed since the previous run), `--install-dir/--zcode-dir/--home/--platform` (override detection; `--platform` is for cross-inspection and **blocks** lock operations).
+   Useful flags: `--list-paths` (print the path-detection ledger **before** doing anything else), `--lang {auto,en,zh}` (report language; `auto` follows the system locale, so a Chinese system gets a Chinese report and everything else gets English), `--redact` (mask paths, branch names, remote hosts), `--no-scan` (skip the ~300 MB bundle scan: instant, but the code semantics stay unverified), `--diff prev.json` (what changed since the previous run), `--install-dir/--zcode-dir/--home/--platform` (override detection; `--platform` is for cross-inspection and **blocks** lock operations).
 
 2. **Read the result.** The CLI prints the verdict plus the HTML/JSON paths. Report sections are fixed: conclusion and reasoning → matched truth-table row → workspace evidence → path-detection ledger → client code signatures → auxiliary traces → timeline → remediation → open questions → reproduction commands.
 
@@ -41,7 +41,9 @@ Translate "a pile of local state files plus a minified client bundle" into a **r
    python3 scripts/diagnose.py --unlock         # reversible
    ```
 
-5. **After changing the scripts, always re-run the regression**: `python3 scripts/selftest.py` (16 synthetic fixtures, all verdict branches, plus macOS/Linux layout simulation — it never touches a real `~/.zcode`).
+5. **After changing the scripts, always re-run the regression**: `python3 scripts/selftest.py` (18 synthetic fixtures covering every verdict branch, signature drift, `--no-scan`, `--redact`, `--diff`, both report languages, stdlib-only, simulated macOS/Linux layouts, environment-variable overrides, the detection ledger, the lock guard and a host-bundle-only machine). Add `--with-lock` to also exercise the real OS lock primitives against a throwaway fixture. It never touches a real `~/.zcode`.
+
+Machine-readable signals for automation live in `verdict.flags` (e.g. `accepted_records`, `evidence_wiped`, `signature_drift`) — assert on those rather than on rendered prose, which is localised.
 
 ## Verdict truth table
 

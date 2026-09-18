@@ -38,12 +38,12 @@ r, doc = run_diag(base / "r.json", base / "r.html", ["--platform", "linux", "--h
 check("verdict=UPLOADED", doc and doc["verdict"]["code"] == "UPLOADED")
 ```
 
-Assertions must be **locale-independent** — check the machine-readable reason/warning codes in the JSON, not the rendered prose.
+Assertions must be **locale-independent** — check `verdict.flags` (and the other JSON fields), never the rendered prose, which is localised.
 
 ## Local checks before opening a PR
 
 ```bash
-python3 scripts/selftest.py            # 15+ fixtures
+python3 scripts/selftest.py               # 18 fixtures
 python3 scripts/selftest.py --with-lock   # also exercises the real lock primitives
 python3 scripts/diagnose.py --list-paths  # sanity-check path detection on your own machine
 ```
@@ -56,4 +56,4 @@ python3 scripts/diagnose.py --list-paths  # sanity-check path detection on your 
 
 ## Translations
 
-The report is generated in English and Chinese; other languages are welcome. All user-facing prose lives in the `MESSAGES` table in `scripts/diagnose.py` — add a new locale there (keys are stable) and a `--lang` value. Do not translate inside the logic.
+The report is generated in English and Chinese; other languages are welcome. All user-facing prose lives in the `MESSAGES` table in `scripts/diagnose.py` (204 keys per locale) — add a new locale there (keys are stable) and a `--lang` value. Do not translate inside the logic.
