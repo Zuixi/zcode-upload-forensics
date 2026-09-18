@@ -22,7 +22,7 @@ The collector is a small package; put a change in the module that owns the conce
 | `zcode_forensics/signatures.py` | bundle scanning + the `accepted == uploaded` adjacency check | new semantic check |
 | `zcode_forensics/collect.py` | reading `state.json`, manifests, aux traces, processes | new field or artifact to read |
 | `zcode_forensics/verdict.py` | truth table, confidence, `flags` | new verdict branch |
-| `zcode_forensics/report.py` | HTML sections, CSS, escaping | new report section |
+| `zcode_forensics/report.py` | HTML card layout, CSS, escaping | new card or styling change |
 | `zcode_forensics/locking.py` | verify / quarantine+lock / restore | new platform lock primitive |
 | `zcode_forensics/diffing.py` | previous-report comparison | new tracked signal |
 | `zcode_forensics/cli.py` | argparse and wiring only | new flag |
@@ -63,9 +63,10 @@ Assertions must be **locale-independent** — check `verdict.flags` (and the oth
 ## Local checks before opening a PR
 
 ```bash
-python3 scripts/selftest.py               # 18 fixtures
+python3 scripts/selftest.py               # 21 fixtures
 python3 scripts/selftest.py --with-lock   # also exercises the real lock primitives
 python3 scripts/diagnose.py --list-paths  # sanity-check path detection on your own machine
+python3 scripts/make-sample-report.py    # regenerate docs/sample-report.html (synthetic fixture)
 ```
 
 ## Pull requests

@@ -378,6 +378,27 @@ def main():
     check("branches hashed", all(len(x) == 8 for x in m.get("branches", [])) and m.get("branches"))
     check("workspace path masked", "<redacted>" in str((doc or {}).get("workspaces", [{}])[0].get("workspace_path_display")))
 
+    # 09b) --redact paths: machine paths masked, branch names left readable
+    b = build_case(root, "09b-redact-paths")
+    r, doc, _ = run_case(b, extra_args=["--redact", "paths"])
+    print("case 09b redact paths")
+    ws = (doc or {}).get("workspaces", [{}])[0]
+    m = (ws.get("manifests") or [{}])[0]
+    check("home masked", doc and doc["detection"]["home"] == "~", str(doc and doc["detection"]["home"]))
+    check("temp path masked", doc and doc["detection"]["data_dir"].startswith("$TMP"), str(doc and doc["detection"]["data_dir"]))
+    check("reproduce block masked too", doc and "$TMP" in doc["reproduce"] and str(b) not in doc["reproduce"], doc and doc["reproduce"][:80])
+    check("branches still readable", m.get("branches") == ["feature/internal-roadmap", "main"], str(m.get("branches")))
+    check("host masked", doc and doc["os"]["host"] == "REDACTED-HOST", str(doc and doc["os"]["host"]))
+
+    # 09c) --redact (all) masks identifiers as well
+    b = build_case(root, "09c-redact-all")
+    r, doc, _ = run_case(b, extra_args=["--redact"])
+    ws = (doc or {}).get("workspaces", [{}])[0]
+    m = (ws.get("manifests") or [{}])[0]
+    print("case 09c redact all")
+    check("branches hashed too", all(len(x) == 8 for x in m.get("branches", [])), str(m.get("branches")))
+    check("home masked", doc and doc["detection"]["home"] == "~", str(doc and doc["detection"]["home"]))
+
     # 10) --diff detects a newly accepted upload
     b = build_case(root, "10-diff", accepted=False)
     _, doc1, _ = run_case(b)
@@ -573,12 +594,18 @@ def main():
           str({k: len(v) for k, v in locales.items()}))
     defined = set().union(*locales.values()) if locales else set()
     used = set()
+    # A key counts as used when it is passed to tr() OR referenced as a literal
+    # from a table (e.g. the hero flag/chip mapping). The strict half is the
+    # "every tr() key exists" check below, which still catches typos.
+    key_literal = re.compile(r"^[mnts]\d{3}$")
     for path in sorted((HERE / LOCAL_PACKAGE).glob("*.py")) + [DIAGNOSE]:
         src_text = path.read_text(encoding="utf-8")
         for node in ast.walk(ast.parse(src_text)):
             if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "tr":
                 if node.args and isinstance(node.args[0], ast.Constant) and isinstance(node.args[0].value, str):
                     used.add(node.args[0].value)
+            elif isinstance(node, ast.Constant) and isinstance(node.value, str) and key_literal.match(node.value):
+                used.add(node.value)
     unknown = sorted(used - defined)
     check("every tr() key exists", not unknown, str(unknown))
     unused = sorted(k for k in defined - used if not k.startswith("s"))

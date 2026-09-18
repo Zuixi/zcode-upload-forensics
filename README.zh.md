@@ -91,8 +91,10 @@ python3 scripts/diagnose.py --out ./zcode-upload-report.html
 # 2) 机读产物，用于变化监控（--diff 对比上次）
 python3 scripts/diagnose.py --json ./report.json --diff ./previous.json
 
-# 3) 需要外发时脱敏（路径/分支名/remote 主机名哈希化）
+# 3) 需要外发时脱敏。--redact 全脱敏（路径 + 标识符）；--redact paths 只脱敏机器路径，
+#    分支名保留可读，适合贴给同事核对
 python3 scripts/diagnose.py --redact --out ./zcode-upload-report.redacted.html
+python3 scripts/diagnose.py --redact paths --out ./zcode-upload-report.shared.html
 
 # 4) 自检环境 / 回归本工具自身（全部用合成夹具，不触碰真实 ~/.zcode）
 python3 scripts/selftest.py
@@ -105,6 +107,8 @@ python3 scripts/selftest.py
 > "排查一下 zcode 是不是把我的代码上传了，给我诊断报告"
 
 ## 报告包含什么
+
+渲染样张见 [`docs/sample-report.html`](./docs/sample-report.html)——由完全合成的夹具配合 `--redact paths` 生成，不含任何真实路径、哈希或分支名。需要重新生成时执行 `python3 scripts/make-sample-report.py`。
 
 1. 结论与依据（含置信度与 **falsifiers**：什么条件能推翻它）
 2. 命中的真值表行

@@ -1,0 +1,598 @@
+{
+  "schema": "zcode-upload-forensics/v1",
+  "lang": "en",
+  "generated_at": "2026-09-19 01:28:42 ",
+  "detection": {
+    "platform": "windows",
+    "platform_source": "platform.system() auto-detection",
+    "home": "~",
+    "home_source": "USERPROFILE/HOME environment variable",
+    "data_dir": "$TMP\\demo-machine\\zcode",
+    "data_dir_how": "explicit --zcode-dir",
+    "checkpoints": "$TMP\\demo-machine\\zcode\\v2\\checkpoints"
+  },
+  "os": {
+    "system": "Windows",
+    "release": "11",
+    "host": "REDACTED-HOST",
+    "python": "3.13.14"
+  },
+  "client": {
+    "install_dir": "$TMP\\demo-machine\\install",
+    "install_how": "explicit --install-dir",
+    "asar": "$TMP\\demo-machine\\install\\resources\\app.asar",
+    "version": null,
+    "candidates_tried": [
+      {
+        "path": "$TMP\\demo-machine\\install",
+        "how": "explicit --install-dir"
+      }
+    ],
+    "targets": [
+      {
+        "target": "$TMP\\demo-machine\\install\\resources\\app.asar",
+        "how": "explicit --install-dir"
+      }
+    ],
+    "scan_attempts": [
+      {
+        "target": "$TMP\\demo-machine\\install\\resources\\app.asar",
+        "how": "explicit --install-dir",
+        "gate_hit": true,
+        "mechanism_hits": 5,
+        "bytes": 3571,
+        "mtime": 1789752522.2586856
+      }
+    ]
+  },
+  "signatures": {
+    "scanned": true,
+    "source": null,
+    "gate_hit": true,
+    "counts": {
+      "endpoint": 1,
+      "artifact_name": 1,
+      "keywrap": 1,
+      "oss_form": 0,
+      "manifest_schema": 0,
+      "extra_schema": 0,
+      "capture_hook": 1,
+      "max_size_error": 0,
+      "state_field": 1,
+      "mark_accepted": 1,
+      "upload_object": 1,
+      "oss_callback": 0,
+      "payload_too_large": 0,
+      "incremental": 0
+    },
+    "mechanism_hits": 5,
+    "mechanism_total": 5,
+    "semantic_invariant": "verified-heuristic",
+    "semantic_distance": 2020,
+    "target": "$TMP\\demo-machine\\install\\resources\\app.asar",
+    "attempts": [
+      {
+        "target": "$TMP\\demo-machine\\install\\resources\\app.asar",
+        "how": "explicit --install-dir",
+        "gate_hit": true,
+        "mechanism_hits": 5,
+        "bytes": 3571,
+        "mtime": 1789752522.2586856
+      }
+    ],
+    "candidates": [
+      {
+        "target": "$TMP\\demo-machine\\install\\resources\\app.asar",
+        "how": "explicit --install-dir"
+      }
+    ],
+    "install_dir": "$TMP\\demo-machine\\install",
+    "install_how": "explicit --install-dir",
+    "target_bytes": 3571,
+    "target_mtime": 1789752522.2586856
+  },
+  "workspaces": [
+    {
+      "key": "0011aa22bb33",
+      "dir": "$TMP\\demo-machine\\zcode\\v2\\checkpoints\\0011aa22bb33",
+      "dir_mtime": 1789752522.3748214,
+      "state": {
+        "workspacePath": "/home/dev/notes",
+        "workspaceKey": "/home/dev/notes",
+        "lastCompressedSize": {
+          "encryptedSizeBytes": 61233,
+          "workspaceSizeBytes": 310400,
+          "manifestHash": "92526627b4e43601e9b2d2eba091232652b1fb655f89d5d51cc2ab21bd1b4e48",
+          "recordedAt": 1789583849341
+        }
+      },
+      "state_mtime": 1789752522.2882018,
+      "manifests": [
+        {
+          "file": "92526627b4e43601e9b2d2eba091232652b1fb655f89d5d51cc2ab21bd1b4e48.json",
+          "bytes": 205300,
+          "mtime": 1789752522.375324,
+          "schema": "repo_snapshot_manifest/v2",
+          "createdAt": 1789063325140,
+          "workspaceKey": "/home/dev/notes",
+          "label": "92526627b4e43601e9b2d2eba091232652b1fb655f89d5d51cc2ab21bd1b4e48.json",
+          "files": 4,
+          "top_groups": [
+            {
+              "name": ".git/objects",
+              "bytes": 180000,
+              "pct": 87.67657087189478
+            },
+            {
+              "name": "drafts",
+              "bytes": 21000,
+              "pct": 10.228933268387726
+            },
+            {
+              "name": "meeting-notes",
+              "bytes": 3400,
+              "pct": 1.6561130053580126
+            },
+            {
+              "name": ".git/logs",
+              "bytes": 900,
+              "pct": 0.43838285435947394
+            }
+          ],
+          "git_counts": {
+            "git": 2,
+            "reflog": 1,
+            "refs": 0,
+            "worktree": 0
+          },
+          "branches": [],
+          "remotes": [],
+          "worktrees": [],
+          "sensitive": [],
+          "stats": {
+            "includedFileCount": 4,
+            "includedBytes": 205300
+          },
+          "manifest_files": 4,
+          "hash": "0ef9b5555059afa8"
+        }
+      ],
+      "extra_manifests": [],
+      "pending": [],
+      "tmp": [],
+      "warnings": [
+        "manifests/ mtime (2026-09-19 01:30:12) is later than state.json (2026-09-19 01:28:42): an unrecorded capture took place"
+      ],
+      "workspace_path": "/home/dev/notes",
+      "failure_count": null,
+      "last_compressed": {
+        "encryptedSizeBytes": 61233,
+        "workspaceSizeBytes": 310400,
+        "manifestHash": "92526627b4e43601e9b2d2eba091232652b1fb655f89d5d51cc2ab21bd1b4e48",
+        "recordedAt": 1789583849341
+      },
+      "accepted_hash": null,
+      "accepted_path": null,
+      "accepted_extra_hash": null,
+      "timeline_anomaly": true,
+      "workspace_path_display": "/home/dev/notes",
+      "local_git_remotes": null
+    },
+    {
+      "key": "a1b2c3d4e5f6",
+      "dir": "$TMP\\demo-machine\\zcode\\v2\\checkpoints\\a1b2c3d4e5f6",
+      "dir_mtime": 1789752522.274603,
+      "state": {
+        "workspacePath": "/home/dev/projects/demo-repo",
+        "workspaceKey": "/home/dev/projects/demo-repo",
+        "lastCompressedSize": {
+          "encryptedSizeBytes": 444594,
+          "workspaceSizeBytes": 20721137,
+          "manifestHash": "7baf045621b3d9c14a17d6b088e9adbe6ccb6539cca1b0c7313db878ce6cf8e0",
+          "recordedAt": 1789583849341
+        },
+        "lastAcceptedManifestHash": "7baf045621b3d9c14a17d6b088e9adbe6ccb6539cca1b0c7313db878ce6cf8e0",
+        "lastAcceptedManifestPath": "<checkpoints>/manifests/7baf045621b3d9c14a17d6b088e9adbe6ccb6539cca1b0c7313db878ce6cf8e0.json",
+        "lastAcceptedExtraManifestHash": "3c9f1d7a5e02b846c1d93f60a7e4b2c85d1e0f39a6b47c28159dfa36e0c7b492",
+        "lastAcceptedExtraManifestPath": "<checkpoints>/extra-manifests/3c9f1d7a5e02b846c1d93f60a7e4b2c85d1e0f39a6b47c28159dfa36e0c7b492.json",
+        "failureCount": 19
+      },
+      "state_mtime": 1789752522.2680976,
+      "manifests": [
+        {
+          "file": "7baf045621b3d9c14a17d6b088e9adbe6ccb6539cca1b0c7313db878ce6cf8e0.json",
+          "bytes": 13510637,
+          "mtime": 1789752522.274603,
+          "schema": "repo_snapshot_manifest/v2",
+          "createdAt": 1789583849341,
+          "workspaceKey": "/home/dev/projects/demo-repo",
+          "label": "7baf045621b3d9c14a17d6b088e9adbe6ccb6539cca1b0c7313db878ce6cf8e0.json",
+          "files": 23,
+          "top_groups": [
+            {
+              "name": ".git/objects",
+              "bytes": 12220000,
+              "pct": 90.44725278312193
+            },
+            {
+              "name": "data",
+              "bytes": 890000,
+              "pct": 6.587402207608716
+            },
+            {
+              "name": "src",
+              "bytes": 133500,
+              "pct": 0.9881103311413074
+            },
+            {
+              "name": ".git/worktrees",
+              "bytes": 127597,
+              "pct": 0.9444188308811791
+            },
+            {
+              "name": "backend",
+              "bytes": 63858,
+              "pct": 0.47264980918368243
+            },
+            {
+              "name": "docs",
+              "bytes": 30400,
+              "pct": 0.22500789563067974
+            },
+            {
+              "name": ".git/logs",
+              "bytes": 25550,
+              "pct": 0.18911025438696932
+            },
+            {
+              "name": "infra",
+              "bytes": 14088,
+              "pct": 0.10427339584358605
+            },
+            {
+              "name": "README.md",
+              "bytes": 4200,
+              "pct": 0.031086617159501805
+            },
+            {
+              "name": ".git/config",
+              "bytes": 1275,
+              "pct": 0.009437008780563048
+            },
+            {
+              "name": ".git/refs",
+              "bytes": 123,
+              "pct": 0.0009103937882425528
+            },
+            {
+              "name": ".git/packed-refs",
+              "bytes": 46,
+              "pct": 0.0003404724736516864
+            }
+          ],
+          "git_counts": {
+            "git": 13,
+            "reflog": 3,
+            "refs": 3,
+            "worktree": 3
+          },
+          "branches": [
+            "main",
+            "release/2.1"
+          ],
+          "remotes": [
+            "origin"
+          ],
+          "worktrees": [
+            "wt-docs",
+            "wt-perf"
+          ],
+          "sensitive": [
+            {
+              "kind": "s002",
+              "path": "backend/.env.example",
+              "sizeBytes": 458
+            },
+            {
+              "kind": "s003",
+              "path": "infra/deploy.key",
+              "sizeBytes": 1688
+            },
+            {
+              "kind": "s005",
+              "path": "data/seed/dump.sql",
+              "sizeBytes": 890000
+            }
+          ],
+          "stats": {
+            "includedFileCount": 23,
+            "includedBytes": 13510637
+          },
+          "manifest_files": 23,
+          "hash": "224faf3f08b2225d"
+        }
+      ],
+      "extra_manifests": [
+        {
+          "file": "3c9f1d7a5e02b846c1d93f60a7e4b2c85d1e0f39a6b47c28159dfa36e0c7b492.json",
+          "bytes": 364,
+          "mtime": 1789752522.274603,
+          "schema": "repo_snapshot_extra_manifest/v1",
+          "createdAt": 1789583849341,
+          "workspaceKey": null,
+          "included": [
+            {
+              "groupId": "global-configs",
+              "path": "settings.behavior.json",
+              "sizeBytes": 807,
+              "source": "app-memory:global-settings"
+            },
+            {
+              "groupId": "global-configs",
+              "path": "AGENTS.md",
+              "sizeBytes": 512,
+              "source": "app-memory:global-instructions"
+            }
+          ],
+          "stats": {
+            "includedFileCount": 2,
+            "includedBytes": 1319
+          },
+          "hash": "6419c2240e5d7fe8"
+        }
+      ],
+      "pending": [],
+      "tmp": [],
+      "warnings": [],
+      "workspace_path": "/home/dev/projects/demo-repo",
+      "failure_count": 19,
+      "last_compressed": {
+        "encryptedSizeBytes": 444594,
+        "workspaceSizeBytes": 20721137,
+        "manifestHash": "7baf045621b3d9c14a17d6b088e9adbe6ccb6539cca1b0c7313db878ce6cf8e0",
+        "recordedAt": 1789583849341
+      },
+      "accepted_hash": "7baf045621b3d9c14a17d6b088e9adbe6ccb6539cca1b0c7313db878ce6cf8e0",
+      "accepted_path": "<checkpoints>/manifests/7baf045621b3d9c14a17d6b088e9adbe6ccb6539cca1b0c7313db878ce6cf8e0.json",
+      "accepted_extra_hash": "3c9f1d7a5e02b846c1d93f60a7e4b2c85d1e0f39a6b47c28159dfa36e0c7b492",
+      "timeline_anomaly": false,
+      "size_ratio": 0.02145606199119286,
+      "ratio_hint": "encrypted artifact / manifest size ratio = 0.021 ≪ 1. .git/objects is already zlib-compressed, so gzip barely shrinks it; a ratio far below 1 means this artifact was an incremental delta — which means <b>a full baseline was uploaded earlier</b>, i.e. the complete workspace has already been taken.",
+      "workspace_path_display": "/home/dev/projects/demo-repo",
+      "local_git_remotes": null
+    },
+    {
+      "key": "f6e5d4c3b2a1",
+      "dir": "$TMP\\demo-machine\\zcode\\v2\\checkpoints\\f6e5d4c3b2a1",
+      "dir_mtime": 1789752522.2807007,
+      "state": {
+        "workspacePath": "/home/dev/projects/internal-tools",
+        "workspaceKey": "/home/dev/projects/internal-tools",
+        "lastCompressedSize": {
+          "encryptedSizeBytes": 812004,
+          "workspaceSizeBytes": 3659211,
+          "manifestHash": "a837b6a1e9d766ce1d10222dd8717b18c48d8a03f99fc43090e9637af7bc59bd",
+          "recordedAt": 1789583849341
+        },
+        "failureCount": 3
+      },
+      "state_mtime": 1789752522.2756042,
+      "manifests": [
+        {
+          "file": "a837b6a1e9d766ce1d10222dd8717b18c48d8a03f99fc43090e9637af7bc59bd.json",
+          "bytes": 3486941,
+          "mtime": 1789752522.2807007,
+          "schema": "repo_snapshot_manifest/v2",
+          "createdAt": 1789665890084,
+          "workspaceKey": "/home/dev/projects/internal-tools",
+          "label": "a837b6a1e9d766ce1d10222dd8717b18c48d8a03f99fc43090e9637af7bc59bd.json",
+          "files": 5,
+          "top_groups": [
+            {
+              "name": ".git/objects",
+              "bytes": 3400000,
+              "pct": 97.50666845237703
+            },
+            {
+              "name": "services",
+              "bytes": 74000,
+              "pct": 2.122203960434088
+            },
+            {
+              "name": "deploy",
+              "bytes": 9800,
+              "pct": 0.2810486325980279
+            },
+            {
+              "name": ".git/logs",
+              "bytes": 3100,
+              "pct": 0.08890313888304964
+            },
+            {
+              "name": ".git/refs",
+              "bytes": 41,
+              "pct": 0.0011758157078080758
+            }
+          ],
+          "git_counts": {
+            "git": 3,
+            "reflog": 1,
+            "refs": 1,
+            "worktree": 0
+          },
+          "branches": [
+            "main"
+          ],
+          "remotes": [],
+          "worktrees": [],
+          "sensitive": [],
+          "stats": {
+            "includedFileCount": 5,
+            "includedBytes": 3486941
+          },
+          "manifest_files": 5,
+          "hash": "f83b3d17efc852a0"
+        }
+      ],
+      "extra_manifests": [],
+      "pending": [
+        {
+          "file": "pending\\f6e5d4c3b2a1.enc",
+          "bytes": 2048,
+          "mtime": 1789752522.281701
+        }
+      ],
+      "tmp": [],
+      "warnings": [],
+      "workspace_path": "/home/dev/projects/internal-tools",
+      "failure_count": 3,
+      "last_compressed": {
+        "encryptedSizeBytes": 812004,
+        "workspaceSizeBytes": 3659211,
+        "manifestHash": "a837b6a1e9d766ce1d10222dd8717b18c48d8a03f99fc43090e9637af7bc59bd",
+        "recordedAt": 1789583849341
+      },
+      "accepted_hash": null,
+      "accepted_path": null,
+      "accepted_extra_hash": null,
+      "timeline_anomaly": false,
+      "size_ratio": 0.22190685369059068,
+      "ratio_hint": "encrypted artifact / manifest size ratio = 0.222 ≪ 1. .git/objects is already zlib-compressed, so gzip barely shrinks it; a ratio far below 1 means this artifact was an incremental delta — which means <b>a full baseline was uploaded earlier</b>, i.e. the complete workspace has already been taken.",
+      "workspace_path_display": "/home/dev/projects/internal-tools",
+      "local_git_remotes": null
+    }
+  ],
+  "aux": {
+    "data_dir": "$TMP\\demo-machine\\zcode",
+    "exists": true,
+    "settings": {
+      "optimizeAgentExperienceEnabled": false,
+      "repoSnapshotIndexingEnabled": true,
+      "repoSnapshotIndexingUserConfigured": true
+    },
+    "recent_projects": [
+      "/home/dev/projects/demo-repo",
+      "/home/dev/projects/internal-tools",
+      "/home/dev/notes"
+    ],
+    "sessions": [
+      {
+        "kind": "local",
+        "workspacePath": "/home/dev/projects/demo-repo",
+        "remote": false,
+        "purpose": "project"
+      },
+      {
+        "kind": "local",
+        "workspacePath": "/home/dev/projects/internal-tools",
+        "remote": false,
+        "purpose": "project"
+      },
+      {
+        "kind": "remote",
+        "workspacePath": "/srv/build-agent/checkout",
+        "remote": true,
+        "purpose": "project"
+      }
+    ],
+    "credential_keys": [
+      "oauth:active_provider",
+      "zcodejwttoken"
+    ],
+    "login_token_present": true,
+    "checkpoints_present": true,
+    "certs": [
+      "$TMP\\demo-machine\\zcode\\v2\\certs\\zcode-network-ca.pem"
+    ],
+    "appdata_client_dir": "~\\AppData\\Roaming\\Zcode",
+    "appdata_client_how": "%APPDATA%\\Zcode (has Chromium profile markers)",
+    "log_dates": [
+      "2026-09-17",
+      "2026-09-18"
+    ]
+  },
+  "processes": {
+    "running": false,
+    "count": 0
+  },
+  "log_mentions": {
+    "git-checkpoint channel": 2,
+    "repo-wiki": 2,
+    "repo-snapshot-upload log lines": 0,
+    "upload-credential requests": 0,
+    "zcode.z.ai": 0
+  },
+  "warnings": [],
+  "errors": [],
+  "redacted": true,
+  "timeline": [
+    [
+      1789752522.2882018,
+      "[0011aa22bb33] state.json written"
+    ],
+    [
+      1789063325.14,
+      "[0011aa22bb33] manifest written"
+    ],
+    [
+      1789752522.2680976,
+      "[a1b2c3d4e5f6] state.json written"
+    ],
+    [
+      1789583849.341,
+      "[a1b2c3d4e5f6] manifest written"
+    ],
+    [
+      1789583849.341,
+      "[a1b2c3d4e5f6] global config manifest written"
+    ],
+    [
+      1789752522.2756042,
+      "[f6e5d4c3b2a1] state.json written"
+    ],
+    [
+      1789665890.084,
+      "[f6e5d4c3b2a1] manifest written"
+    ],
+    [
+      1789752522.281701,
+      "[f6e5d4c3b2a1] pending ciphertext pending\\f6e5d4c3b2a1.enc"
+    ]
+  ],
+  "verdict": {
+    "code": "UPLOADED",
+    "label": "Uploaded",
+    "confidence": "high",
+    "reasons": [
+      "Workspace /home/dev/projects/demo-repo: state.json records lastAcceptedManifestHash=7baf045621b3d9c1… and pending/ is empty.",
+      "Per the client code, lastAcceptedManifestHash is written by markAcceptedManifest only after the OSS PostObject returns 2xx.",
+      "Static check of the local client: markAcceptedManifest sits 2020B away from uploadObject, which supports the “accepted = uploaded” invariant (heuristic).",
+      "A login token exists in credentials.json, so the pipeline is in an activatable state."
+    ],
+    "falsifiers": [
+      "This claim fails if that build has a markAcceptedManifest call site that does not go through uploadObject."
+    ],
+    "affected_workspaces": [
+      "/home/dev/notes",
+      "/home/dev/projects/demo-repo",
+      "/home/dev/projects/internal-tools"
+    ],
+    "flags": {
+      "pipeline_confirmed": true,
+      "signature_scan_done": true,
+      "invariant_verified": true,
+      "accepted_records": true,
+      "pending_artifacts": true,
+      "capture_artifacts": true,
+      "evidence_wiped": false,
+      "signature_drift": false,
+      "token_present": true,
+      "client_running": false
+    }
+  },
+  "lock_state": {
+    "locked": false,
+    "detail": "write succeeded"
+  },
+  "reproduce": "# Collection script (read-only)\npython cli.py --redact --json report.json\n\n# Manual cross-checks\nfind \"$TMP\\demo-machine\\zcode\\v2\\checkpoints\" -name state.json -exec grep -H lastAcceptedManifestHash {} \\;\ngrep -a -c \"snapshot/upload-credential\" \"$TMP\\demo-machine\\install\\resources\\app.asar\"\ngrep -a -o \"markAcceptedManifest\" \"$TMP\\demo-machine\\install\\resources\\app.asar\" | wc -l"
+}

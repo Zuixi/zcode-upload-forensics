@@ -9,6 +9,7 @@ import json
 import platform
 import re
 import sys
+import tempfile
 
 from .collect import collect_aux, collect_log_mentions, collect_workspace
 from .constants import SCHEMA, VERDICTS
@@ -21,6 +22,43 @@ from .report import render_html
 from .signatures import scan_signatures
 from .util import Ctx, read_json, read_text
 from .verdict import decide
+
+def _mask_machine_paths(doc, home, tmp, host):
+    """Replace home/temp prefixes and the host name everywhere in the document.
+
+    --redact used to cover only branch and repository identifiers, leaving the
+    real home directory in the detection ledger while claiming to mask paths.
+    """
+    # Tokens must survive html escaping and still read like a path.
+    tokens = [(str(home), "~"), (str(tmp), "$TMP")]
+    if host:
+        tokens.append((str(host), "REDACTED-HOST"))
+    # Longest prefix first: the temp dir lives *under* the home dir, so masking
+    # home first would make the more specific temp prefix unmatchable.
+    tokens.sort(key=lambda t: -len(t[0]))
+
+    def walk(node):
+        if isinstance(node, dict):
+            return {k: walk(v) for k, v in node.items()}
+        if isinstance(node, list):
+            return [walk(v) for v in node]
+        if isinstance(node, str):
+            out = node
+            for raw, token in tokens:
+                if not raw:
+                    continue
+                if raw in out:
+                    out = out.replace(raw, token)
+                elif raw.lower() in out.lower():
+                    out = re.sub(re.escape(raw), token, out, flags=re.IGNORECASE)
+            return out
+        return node
+
+    masked = walk(doc)
+    doc.clear()
+    doc.update(masked)
+    return doc
+
 
 def build_doc(args, ctx: Ctx):
     plat = resolve_platform(args)
@@ -68,7 +106,7 @@ def build_doc(args, ctx: Ctx):
     workspaces = []
     if cp_root.is_dir():
         for d in sorted(p for p in cp_root.iterdir() if p.is_dir()):
-            ws = ctx.guard(f"workspace {d.name}", lambda d=d: collect_workspace(d, ctx, args.redact))
+            ws = ctx.guard(f"workspace {d.name}", lambda d=d: collect_workspace(d, ctx, args.redact_names))
             if ws:
                 workspaces.append(ws)
 
@@ -120,6 +158,11 @@ def build_doc(args, ctx: Ctx):
     doc["reproduce"] = (
         tr("m001", p0=Path(__file__).name, p1=data_dir / 'v2' / 'checkpoints', p2=client.get('asar') or '<app.asar>', p3=client.get('asar') or '<app.asar>')
     )
+    # Deliberately the last step: this masks every machine-identifying string --
+    # detection ledger, candidate list, auxiliary paths and the reproduction
+    # commands -- in one place. Doing it earlier left the reproduce block raw.
+    if getattr(args, "redact_paths", False):
+        _mask_machine_paths(doc, home, tempfile.gettempdir(), doc["os"]["host"])
     return doc
 
 
@@ -156,7 +199,14 @@ def main(argv=None):
     ap.add_argument("--json", dest="json_out", help="JSON output path (default: <html>.json)")
     ap.add_argument("--no-json", action="store_true", help="skip writing the JSON sidecar")
     ap.add_argument("--no-scan", action="store_true", help="skip the app.asar signature scan")
-    ap.add_argument("--redact", action="store_true", help="mask paths, branch names and remote hosts")
+    ap.add_argument(
+        "--redact",
+        nargs="?",
+        const="all",
+        choices=("all", "paths", "names"),
+        default=None,
+        help="mask identifying data: 'all' (default), 'paths' (home/temp/host only) or 'names' (branches, worktrees, remotes)",
+    )
     ap.add_argument("--diff", help="compare against a previous JSON report")
     ap.add_argument("--apply-lock", action="store_true", help="quarantine + lock the checkpoints dir")
     ap.add_argument("--unlock", action="store_true", help="restore write access")
@@ -168,6 +218,8 @@ def main(argv=None):
     set_lang(detect_lang(args.lang))
 
     ctx = Ctx()
+    args.redact_names = args.redact in ("all", "names")
+    args.redact_paths = args.redact in ("all", "paths")
     plat = resolve_platform(args)
     home = resolve_home(args)
     data_dir, data_how = resolve_data_dir(args, home, plat)

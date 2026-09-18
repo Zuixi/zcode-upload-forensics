@@ -24,6 +24,21 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Changed
 
+### Changed
+
+- **Report is now a card layout.** One hero card carries the verdict, confidence and the active flags; one card per section; nested sub-cards for per-workspace evidence. Adds a CSS-only anchor navigation bar, a light and dark theme, a statistics strip per workspace, properly right-aligned numeric columns, and print rules. No JavaScript, still one self-contained file.
+- **Message tables now hold text only.** All block markup moved into the renderer, so the design can change without touching either translation.
+- Workspace cards are ordered by significance (accepted upload → pending artifact → capture only) instead of by directory name.
+
+### Added
+
+- [`docs/sample-report.html`](./docs/sample-report.html) plus `scripts/make-sample-report.py`: a committed example rendered from a fully synthetic fixture, regenerable and deterministic.
+- `--redact` now takes a granularity: `all` (default), `paths` (mask home/temp/host only, keep branch names readable) or `names`.
+
+### Fixed
+
+- `--redact` claimed to mask paths but only covered branch and repository identifiers: the detection ledger, the candidate list and the reproduction commands still carried the real home directory. Machine-path masking now runs as the last step of document assembly and uses longest-prefix-first replacement.
+
 ## [0.1.0] - 2026-09-19
 
 Initial release.

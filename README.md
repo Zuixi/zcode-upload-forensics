@@ -106,8 +106,10 @@ python3 scripts/diagnose.py --out ./zcode-upload-report.html
 # 2) Machine-readable sidecar for diffing and for monitoring
 python3 scripts/diagnose.py --json ./report.json --diff ./previous.json
 
-# 3) Safe to share: paths, branch names and remote hosts are hashed
+# 3) Safe to share. --redact masks machine paths, branch names and remote hosts;
+#    --redact paths keeps branch names readable while hiding your home/temp/host
 python3 scripts/diagnose.py --redact --out ./zcode-upload-report.redacted.html
+python3 scripts/diagnose.py --redact paths --out ./zcode-upload-report.shared.html
 
 # 4) Verify your environment / regression-test the tool itself (synthetic fixtures only)
 python3 scripts/selftest.py
@@ -136,6 +138,8 @@ assets/badges/               self-hosted status badges (no third-party image hos
 Everything is Python 3.9+ standard library. Keep the `scripts/` tree together when copying the skill.
 
 ## What is in the report
+
+A rendered example lives in [`docs/sample-report.html`](./docs/sample-report.html) — generated from a fully synthetic fixture with `--redact paths`, so it contains no real paths, hashes or branch names. Regenerate it with `python3 scripts/make-sample-report.py`.
 
 1. Conclusion and reasoning, with confidence and **falsifiers** (what would overturn it)
 2. The truth-table row that was matched
