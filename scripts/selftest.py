@@ -16,6 +16,7 @@ import ast
 import importlib.util
 import json
 import os
+import platform
 import re
 import shutil
 import subprocess
@@ -442,7 +443,11 @@ def main():
     check("records how", all("how" in c for c in (led or {}).get("data_dir_candidates", [])))
 
     # 14) lock ops must refuse a platform override
+    # The override must differ from the *host* platform, otherwise the guard
+    # correctly does not fire (that bug only showed up on the Linux runners).
     base, home, _bundle = build_posix_case(root, "14-lock-guard", "linux")
+    host_platform = {"Windows": "windows", "Darwin": "macos"}.get(platform.system(), "linux")
+    other_platform = next(p for p in ("windows", "macos", "linux") if p != host_platform)
     r = subprocess.run(
         [
             sys.executable,
@@ -450,7 +455,7 @@ def main():
             "--lang",
             "en",
             "--platform",
-            "linux",
+            other_platform,
             "--home",
             str(home),
             "--apply-lock",
@@ -460,7 +465,7 @@ def main():
         capture_output=True, text=True, encoding="utf-8", errors="replace",
     )
     print("case 14 lock guard on platform override")
-    check("rc=2 refused", r.returncode == 2, f"rc={r.returncode}")
+    check("rc=2 refused", r.returncode == 2, f"rc={r.returncode} (host={host_platform}, override={other_platform})")
     check("explains why", "does not match" in r.stderr, r.stderr[:200])
 
     # 15) no desktop client at all: only the remote-host bundle pushed into the
@@ -544,6 +549,40 @@ def main():
         check("unlock exits 0", restored.returncode == 0, restored.stdout[-300:])
         after = lock_cmd("--verify-lock")
         check("writable after unlock", after.returncode == 1, after.stdout[-200:])
+
+    # 19) message catalogue integrity: duplicate keys are silent in Python, a
+    #     missing key silently falls back to the key id, and a typo in a tr() call
+    #     is invisible until a report renders.
+    msg_path = HERE / LOCAL_PACKAGE / "messages.py"
+    msg_tree = ast.parse(msg_path.read_text(encoding="utf-8"))
+    msg_node = next(
+        n
+        for n in msg_tree.body
+        if isinstance(n, ast.Assign) and getattr(n.targets[0], "id", "") == "MESSAGES"
+    )
+    locales, dupes = {}, {}
+    for key, val in zip(msg_node.value.keys, msg_node.value.values):
+        names = [k.value for k in val.keys]
+        locales[key.value] = set(names)
+        bad = sorted({n for n in names if names.count(n) > 1})
+        if bad:
+            dupes[key.value] = bad
+    print("case 19 message catalogue integrity")
+    check("no duplicate keys per locale", not dupes, str(dupes))
+    check("locales have identical key sets", len({frozenset(v) for v in locales.values()}) == 1,
+          str({k: len(v) for k, v in locales.items()}))
+    defined = set().union(*locales.values()) if locales else set()
+    used = set()
+    for path in sorted((HERE / LOCAL_PACKAGE).glob("*.py")) + [DIAGNOSE]:
+        src_text = path.read_text(encoding="utf-8")
+        for node in ast.walk(ast.parse(src_text)):
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "tr":
+                if node.args and isinstance(node.args[0], ast.Constant) and isinstance(node.args[0].value, str):
+                    used.add(node.args[0].value)
+    unknown = sorted(used - defined)
+    check("every tr() key exists", not unknown, str(unknown))
+    unused = sorted(k for k in defined - used if not k.startswith("s"))
+    check("no unused message keys", not unused, str(unused))
 
     print()
     if failures:

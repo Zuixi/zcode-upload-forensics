@@ -29,6 +29,7 @@ rmdir /s /q "%USERPROFILE%\.zcode\v2\checkpoints"
 mkdir "%USERPROFILE%\.zcode\v2\checkpoints"
 icacls "%USERPROFILE%\.zcode\v2\checkpoints" /inheritance:r ^
   /grant:r "%USERNAME%:(OI)(CI)(RX)" /grant:r "SYSTEM:(OI)(CI)(F)" /grant:r "Administrators:(OI)(CI)(F)"
+icacls "%USERPROFILE%\.zcode\v2\checkpoints" /deny "%USERNAME%:(OI)(CI)(W,D)"
 :: verify: this must be rejected
 echo x > "%USERPROFILE%\.zcode\v2\checkpoints\probe"
 ```
@@ -36,6 +37,8 @@ echo x > "%USERPROFILE%\.zcode\v2\checkpoints\probe"
 Restore: `icacls "%USERPROFILE%\.zcode\v2\checkpoints" /reset /T`
 
 `/inheritance:r` breaks inheritance; the user keeps `RX` (read/list, so the client can still read old state without erroring) while SYSTEM/Administrators keep `F` for recovery.
+
+**The `/deny` line is not optional.** An allow-only ACL is silently ineffective whenever the account is a member of `Administrators` — the Windows default, and the case on CI runners — because the token also carries that group's `F` allow ACE, so the directory stays writable. An explicit deny for the user's own SID outranks every allow ACE and blocks writes from an elevated token too. This gap was found by the `real lock (windows-latest)` CI job, which runs as an administrator; every local test on a non-admin account had passed. The tool always re-checks with a write probe and reports `NOT blocked` (exit 1) rather than claiming success.
 
 ### macOS (immutable flag)
 

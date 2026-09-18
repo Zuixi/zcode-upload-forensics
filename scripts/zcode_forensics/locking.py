@@ -133,6 +133,13 @@ def apply_lock(data_dir: Path, ctx: Ctx, assume_yes: bool, force: bool):
             grants[3] = f"{user.split(chr(92))[-1]}:(OI)(CI)(RX)"
             code, out = _run(grants, ctx)
         log.append(tr("m059", p0=user, p1=code, p2=out.strip()[:200]))
+        # An allow-only ACL is not sufficient: when the account is a member of
+        # Administrators (the Windows default, and the case on CI runners) the
+        # token also carries that group's allow ACE and the directory stays
+        # writable. An explicit deny for the user's own SID outranks every
+        # allow, so it blocks writes from an elevated token as well.
+        code_d, out_d = _run(["icacls", str(cp), "/deny", f"{user}:(OI)(CI)(W,D)"], ctx)
+        log.append(tr("m179", p0=user, p1=code_d, p2=out_d.strip()[:200]))
     elif system == "macos":
         code, out = _run(["chflags", "uchg", str(cp)], ctx)
         log.append(f"chflags uchg -> rc={code} {out.strip()[:200]}")

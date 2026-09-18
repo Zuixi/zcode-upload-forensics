@@ -17,6 +17,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - English as the primary report language, with `--lang {auto,en,zh}` and locale auto-detection.
 - CI matrix: Linux/macOS/Windows × Python 3.9/3.12/3.13, plus a real lock/unlock job per platform.
 
+### Fixed
+
+- **Windows lock was ineffective on administrator accounts.** An allow-only ACL cannot stop a process running with an Administrators token, because the token also carries that group's allow ACE. The lock now adds an explicit `/deny` ACE for the user's own SID, which outranks every allow. Found by the `real lock (windows-latest)` CI job (CI runs as an administrator; every local test on a non-admin account passed).
+- The `--platform` guard test picked `linux` unconditionally, so on Linux hosts the override matched the real platform and the guard correctly did not fire. The test now picks a platform that differs from the host.
+
+### Changed
+
 ## [0.1.0] - 2026-09-19
 
 Initial release.

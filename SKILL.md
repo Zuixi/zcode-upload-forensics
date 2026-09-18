@@ -41,7 +41,7 @@ Translate "a pile of local state files plus a minified client bundle" into a **r
    python3 scripts/diagnose.py --unlock         # reversible
    ```
 
-5. **After changing the scripts, always re-run the regression**: `python3 scripts/selftest.py` (18 synthetic fixtures covering every verdict branch, signature drift, `--no-scan`, `--redact`, `--diff`, both report languages, stdlib-only, simulated macOS/Linux layouts, environment-variable overrides, the detection ledger, the lock guard and a host-bundle-only machine). Add `--with-lock` to also exercise the real OS lock primitives against a throwaway fixture. It never touches a real `~/.zcode`.
+5. **After changing the scripts, always re-run the regression**: `python3 scripts/selftest.py` (19 synthetic fixtures covering every verdict branch, signature drift, `--no-scan`, `--redact`, `--diff`, both report languages, stdlib-only, message-catalogue integrity, simulated macOS/Linux layouts, environment-variable overrides, the detection ledger, the lock guard and a host-bundle-only machine). Add `--with-lock` to also exercise the real OS lock primitives against a throwaway fixture. It never touches a real `~/.zcode`.
 
 Machine-readable signals for automation live in `verdict.flags` (e.g. `accepted_records`, `evidence_wiped`, `signature_drift`) — assert on those rather than on rendered prose, which is localised.
 
