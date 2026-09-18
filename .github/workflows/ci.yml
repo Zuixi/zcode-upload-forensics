@@ -36,6 +36,7 @@ jobs:
         continue-on-error: true
 
       - name: Report must be well-formed and carry a verdict
+        shell: bash  # windows-latest defaults to PowerShell, which has no heredoc
         run: |
           python - <<'PY'
           import json, pathlib
