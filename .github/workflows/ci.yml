@@ -36,7 +36,27 @@ jobs:
         continue-on-error: true
 
       - name: Report must be well-formed and carry a verdict
-        run: python -c "import json,pathlib; d=json.loads(pathlib.Path('report.json').read_text(encoding='utf-8')); assert d['verdict']['code']; assert pathlib.Path('report.html').read_text(encoding='utf-8').count('<h2>') >= 9; print('ok', d['verdict']['code'])"
+        run: |
+          python - <<'PY'
+          import json, pathlib
+
+          doc = json.loads(pathlib.Path("report.json").read_text(encoding="utf-8"))
+          html = pathlib.Path("report.html").read_text(encoding="utf-8")
+
+          # Structural, not cosmetic: assert the contract, never the markup shape,
+          # so a restyle cannot break CI and a broken render cannot pass it.
+          assert doc["schema"].startswith("zcode-upload-forensics/")
+          assert doc["verdict"]["code"] in {
+              "UPLOADED", "PACKED_PENDING", "CAPTURED_NOT_ACCEPTED",
+              "INCONCLUSIVE", "NO_LOCAL_TRACE", "FEATURE_ABSENT",
+          }
+          assert isinstance(doc["verdict"]["flags"], dict)
+          assert html.lstrip().lower().startswith("<!doctype html")
+          assert html.rstrip().endswith("</html>")
+          assert len(html) > 5000, len(html)
+          assert doc["verdict"]["label"] in html
+          print("ok", doc["verdict"]["code"], f"({len(html)} bytes)")
+          PY
 
   real-lock:
     # The lock path touches real OS permission primitives, so it is exercised
